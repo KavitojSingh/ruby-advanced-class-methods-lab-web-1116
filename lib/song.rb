@@ -28,7 +28,36 @@ class Song
   	self.all.find{|song| song.name == name}    #"detect" is the same exact thing as "find"
   end
 
-  
+
+
+  def self.find_or_create_by_name(name)
+  	self.find_by_name(name)? self.find_by_name(name) : self.create_by_name(name)
+  end
+
+
+  def self.alphabetical
+  	song = self.all.collect {|song_object| song_object.name}.sort
+  	song.collect {|song| self.find_by_name(song)}
+  end
+
+
+  def self.new_from_filename(filename)
+  	array = filename.split(" - ")
+  	song = self.find_or_create_by_name(array[1].slice(0, array[1].length - 4))
+	song.artist_name = array[0]
+	song
+  end
+
+
+  def self.create_from_filename(filename)
+  	self.new_from_filename(filename).save
+  end
+
+
+  def self.destroy_all
+  	@@all.clear
+  end
+
 
   def save
     self.class.all << self
